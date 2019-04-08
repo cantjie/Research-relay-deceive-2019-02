@@ -49,3 +49,5 @@ for x = 1:16
 end
 distance_2_array = distance_2_array_copy
 
+csvwrite('distance_2_array.csv',distance_2_array);
+

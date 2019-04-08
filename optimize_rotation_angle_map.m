@@ -1,4 +1,8 @@
 % optimize_rotation_angle.m
+% Attention! This file is only used to produce adjacent array. As for the
+% original purpose, due to the performance of matlab, I decided to
+% implement it by C. So this file is actually abandoned.
+
 % purpose: to optimize the mapping from bits(symbol)to rotation angle.
 % To make the adjacent symbols(hamming distance = 1) have the least
 % difference.
