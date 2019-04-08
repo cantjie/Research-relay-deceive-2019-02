@@ -236,7 +236,7 @@ int main()
 	unsigned short M1 = 0, M2 = 0, L1 = 200;
 	long long cur_num = 0; // i suppose it's enough.
 	long long N_permutations = 1307674368000; // 15!
-	//long long N_permutations = 500000000; // about 80s in the server
+	//long long N_permutations = 100000000; // about 80s in the server
 	PermutationLink *perm_opt_head = NULL,*perm_opt_tail = NULL;
 	FILE *fp = NULL;
 
