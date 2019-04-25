@@ -96,11 +96,20 @@ short* nextPerm(short* vector, short length) {
 //find the max difference based on criterion M1
 short criterionM1(short* vector, short length) {
 	static short M1 = 0;
+	static short temp = 0;
 	short i = 0;
 	M1 = 0;
 	for (i = 0; i<length; i++) { 
-		M1 = abs(vector[i] - vector[G_adjacent_array[i][0]]) > M1 ? abs(vector[i] - vector[G_adjacent_array[i][0]]) : M1;
-		M1 = abs(vector[i] - vector[G_adjacent_array[i][1]]) > M1 ? abs(vector[i] - vector[G_adjacent_array[i][1]]) : M1;
+		temp = abs(vector[i] - vector[G_adjacent_array[i][0]]);
+		temp = temp > 8 ? (16 - temp) : temp;
+		M1 = temp > M1 ? temp : M1;
+
+		temp = abs(vector[i] - vector[G_adjacent_array[i][1]]);
+		temp = temp > 8 ? (16 - temp) : temp;
+		M1 = temp > M1 ? temp : M1;
+
+		//M1 = abs(vector[i] - vector[G_adjacent_array[i][0]]) > M1 ? abs(vector[i] - vector[G_adjacent_array[i][0]]) : M1;
+		//M1 = abs(vector[i] - vector[G_adjacent_array[i][1]]) > M1 ? abs(vector[i] - vector[G_adjacent_array[i][1]]) : M1;
 	}
 	return M1;
 }
@@ -108,11 +117,18 @@ short criterionM1(short* vector, short length) {
 //find the sum of difference based on criterion M2
 short criterionM2(short* vector, short length) {
 	static short M2 = 0;
+	static short temp = 0;
 	short i = 0;
 	M2 = 0;
 	for (i = 0; i < length; i++) {
-		M2 += abs(vector[i] - vector[G_adjacent_array[i][0]]);
-		M2 += abs(vector[i] - vector[G_adjacent_array[i][1]]);
+		temp = abs(vector[i] - vector[G_adjacent_array[i][0]]);
+		temp = temp > 8 ? (16 - temp) : temp;
+		M2 += temp;
+		temp = abs(vector[i] - vector[G_adjacent_array[i][1]]);
+		temp = temp > 8 ? (16 - temp) : temp;
+		M2 += temp;
+		//M2 += abs(vector[i] - vector[G_adjacent_array[i][0]]);
+		//M2 += abs(vector[i] - vector[G_adjacent_array[i][1]]);
 	}
 	return M2;
 }
@@ -121,11 +137,18 @@ short criterionM2(short* vector, short length) {
 short criterionL1(short* vector) {
 	static short L1 = 0;
 	static short i = 0;
+	static short temp = 0;
 	static short length = 16;
 	L1 = 200;
 	for (i = 0; i < length; i++) {
-		L1 = abs(vector[i] - vector[G_distance_2_array[i][0]]) < L1 ? abs(vector[i] - vector[G_distance_2_array[i][0]]) : L1;
-		L1 = abs(vector[i] - vector[G_distance_2_array[i][1]]) < L1 ? abs(vector[i] - vector[G_distance_2_array[i][1]]) : L1;
+		temp = abs(vector[i] - vector[G_distance_2_array[i][0]]);
+		temp = temp > 8 ? (16 - temp) : temp;
+		L1 = temp < L1 ? temp : L1;
+		temp = abs(vector[i] - vector[G_distance_2_array[i][1]]);
+		temp = temp > 8 ? (16 - temp) : temp;
+		L1 = temp < L1 ? temp : L1;
+		//L1 = abs(vector[i] - vector[G_distance_2_array[i][0]]) < L1 ? abs(vector[i] - vector[G_distance_2_array[i][0]]) : L1;
+		//L1 = abs(vector[i] - vector[G_distance_2_array[i][1]]) < L1 ? abs(vector[i] - vector[G_distance_2_array[i][1]]) : L1;
 	}
 	return L1;
 }
@@ -236,7 +259,7 @@ int main()
 	unsigned short M1 = 0, M2 = 0, L1 = 200;
 	long long cur_num = 0; // i suppose it's enough.
 	long long N_permutations = 1307674368000; // 15!
-	//long long N_permutations = 100000000; // about 80s in the server
+	//long long N_permutations = 100000000; // about 50s in my laptop
 	PermutationLink *perm_opt_head = NULL,*perm_opt_tail = NULL;
 	FILE *fp = NULL;
 
