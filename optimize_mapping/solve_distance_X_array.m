@@ -34,17 +34,6 @@ for x = 1:16
                 distance_2_array_copy(y,count(y)) = x;
             end
         end
-        
-                
-%         if count(x)<3 && ~ismember(y,distance_2_array_copy(x,:)) && ~ismember(x,distance_2_array_copy(y,:))
-%             count(x) = count(x) + 1;
-%             distance_2_array_copy(x,count(x)) = y;
-%         else
-%             if count(y)<3 && ~ismember(y,distance_2_array_copy(x,:)) && ~ismember(x,distance_2_array_copy(y,:))
-%                 count(y) = count(y) + 1;
-%                 distance_2_array_copy(y,count(y)) = x;
-%             end
-%         end
     end
 end
 distance_2_array = distance_2_array_copy

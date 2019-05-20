@@ -1,7 +1,7 @@
 clc,clear
 
 format long;
-N = 16;
+N = 64;
 SNR_db = 4;
 
 theta = 0 : 2*pi/N : 2*pi - 1e-5;

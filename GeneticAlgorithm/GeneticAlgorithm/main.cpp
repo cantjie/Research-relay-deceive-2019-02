@@ -238,13 +238,13 @@ void select()
 		for (j = 0; j < POPULATION; j++) {
 			if (rand() / (double)(RAND_MAX) < G_parents_fitness[j]) {
 				memcpy(G_children_ptr[i], G_parents_ptr[j], sizeof(short)*DNA_LENGTH);
-				G_parents_fitness[j] -= 1;
+				G_parents_fitness[j] = 0;
 				i++;
 			}
 			if (i == POPULATION) { break; }
 			if (rand() / (double)(RAND_MAX) < G_children_fitness[j]) {
 				memcpy(G_children_ptr[i], child_copy[j], sizeof(short)*DNA_LENGTH);
-				G_children_fitness[j] -= 1;
+				G_children_fitness[j] = 0;
 				i++;
 			}
 			if (i == POPULATION) { break; }
@@ -268,61 +268,61 @@ int savePerm(FILE *fp, short *perm) {
 	return 0;
 }
 
-int main() {
-	int i = 0, j = 0;
-	int generation = 0;
-	double max_fitness = 0;
-	int max_fitness_idx = 0;
-	FILE *fp = NULL;
-
-	time_t t;
-
-	srand((unsigned)time(&t));
-
-	for (i = 0; i < POPULATION; i++) {
-		G_parents_ptr[i] = G_perms_A[i];
-		G_children_ptr[i] = G_perms_B[i];
-	}
-
-	initPerms(G_parents_ptr);
-	for (generation = 0; generation < N_GENERATION; generation++) {
-		crossover(G_parents_ptr, G_children_ptr);
-		calculateFitness(G_children_ptr, G_children_fitness);
-		calculateFitness(G_parents_ptr, G_parents_fitness);
-		mutate(G_children_ptr);
-		select(); // new parents generated.
-
-		printf("G:%d\n", generation + 1);
-		//find max
-		calculateFitness(G_children_ptr, G_children_fitness);
-		max_fitness_idx = 0;
-		max_fitness = G_children_fitness[max_fitness_idx];
-		for (i = 0; i < POPULATION; i++) {
-			if (G_children_fitness[i] >= max_fitness) {
-				max_fitness_idx = i;
-				max_fitness = G_children_fitness[i];
-			}
-		}
-		printf("fitness:%.7lf\n", max_fitness);
-		for (i = 0; i < DNA_LENGTH; i++) {
-			printf("%d,", G_children_ptr[max_fitness_idx][i]);
-		}
-		printf("\n");
-	}
-
-	fp = fopen("fitness.csv", "w");
-	fprintf(fp, "%.6lf\n", max_fitness);
-	fclose(fp);
-
-	fp = fopen("perms.csv", "w");
-	for (i = 0; i < POPULATION; i++)
-	{
-		if (abs(G_children_fitness[i] - max_fitness)<1e-5) {
-			savePerm(fp, G_children_ptr[i]);
-		}
-	}
-	fclose(fp);
-
-	system("pause");
-	return 0;
-}
+//int main() {
+//	int i = 0, j = 0;
+//	int generation = 0;
+//	double max_fitness = 0;
+//	int max_fitness_idx = 0;
+//	FILE *fp = NULL;
+//
+//	time_t t;
+//
+//	srand((unsigned)time(&t));
+//
+//	for (i = 0; i < POPULATION; i++) {
+//		G_parents_ptr[i] = G_perms_A[i];
+//		G_children_ptr[i] = G_perms_B[i];
+//	}
+//
+//	initPerms(G_parents_ptr);
+//	for (generation = 0; generation < N_GENERATION; generation++) {
+//		crossover(G_parents_ptr, G_children_ptr);
+//		calculateFitness(G_children_ptr, G_children_fitness);
+//		calculateFitness(G_parents_ptr, G_parents_fitness);
+//		mutate(G_children_ptr);
+//		select(); // new parents generated.
+//
+//		printf("G:%d\n", generation + 1);
+//		//find max
+//		calculateFitness(G_children_ptr, G_children_fitness);
+//		max_fitness_idx = 0;
+//		max_fitness = G_children_fitness[max_fitness_idx];
+//		for (i = 0; i < POPULATION; i++) {
+//			if (G_children_fitness[i] >= max_fitness) {
+//				max_fitness_idx = i;
+//				max_fitness = G_children_fitness[i];
+//			}
+//		}
+//		printf("fitness:%.7lf\n", max_fitness);
+//		for (i = 0; i < DNA_LENGTH; i++) {
+//			printf("%d,", G_children_ptr[max_fitness_idx][i]);
+//		}
+//		printf("\n");
+//	}
+//
+//	fp = fopen("fitness.csv", "w");
+//	fprintf(fp, "%.6lf\n", max_fitness);
+//	fclose(fp);
+//
+//	fp = fopen("perms.csv", "w");
+//	for (i = 0; i < POPULATION; i++)
+//	{
+//		if (abs(G_children_fitness[i] - max_fitness)<1e-5) {
+//			savePerm(fp, G_children_ptr[i]);
+//		}
+//	}
+//	fclose(fp);
+//
+//	system("pause");
+//	return 0;
+//}

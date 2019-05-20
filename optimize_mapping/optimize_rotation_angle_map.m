@@ -32,7 +32,6 @@ for x = 1:16
     end
 end
 
-
 adjacent_array_copy = zeros(16,2);
 adjacent_count = zeros(16,1);
 for x = 1:16
