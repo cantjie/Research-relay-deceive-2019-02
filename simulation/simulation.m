@@ -1,6 +1,6 @@
 clc,clear
 
-SNR_db_max = 50;
+SNR_db_max = 30;
 SNR_db_min = 0;
 SNR_db_step = 3;
 SNR = 10^(SNR_db_min/10);
@@ -8,21 +8,30 @@ num_symbols = 1e6;
 bits_per_symbol = 2; % modulation-relative. 2 means 4QAM
 
 rotation_cycle_min = 1;
-rotation_cycle_max = 9;
+rotation_cycle_max = 1;
 rotation_cycle_step = 1;
 
 return_zero_min = 0;% return zero after return_zero symbols, 0 for not return.
 return_zero_max = 9;
 return_zero_step = 1;
+rotation_symbols = [1];
+with_scaling = 0;
 
 for return_zero = return_zero_min:return_zero_step:return_zero_max
     for rotation_cycle = rotation_cycle_min:rotation_cycle_step:rotation_cycle_max
-        dir_path = ['pics\reture_zero_',num2str(return_zero),'\rotation_cycle_',num2str(rotation_cycle)];
+%         dir_path = ['pics\return_zero_',num2str(return_zero),'\rotation_cycle_',num2str(rotation_cycle)];
+        if with_scaling == 1
+             dir_path = ['pics\return_zero_',num2str(return_zero),'\rotation_bits_',num2str(rotation_symbols)];
+        else
+             dir_path = ['pics\return_zero_',num2str(return_zero),'\rotation_bits_',num2str(rotation_symbols),'_without_scaling'];
+        end
+       
         if ~exist(dir_path,'dir')
             mkdir(dir_path);
         end
 
-        rotation_symbols = randi([1,3],1,rotation_cycle);% how many symbols jointly decide the roration angle, chosen from 1 to 3
+        % rotation_symbols = randi([1,3],1,rotation_cycle);% how many symbols jointly decide the roration angle, chosen from 1 to 3
+%         rotation_symbols = [2];
         rotation_bits = rotation_symbols * bits_per_symbol;
 
         % define messages 
@@ -49,7 +58,7 @@ for return_zero = return_zero_min:return_zero_step:return_zero_max
         constellation_real_quadrant_position_0 =  [-1,1; -1,-1; 1,1; 1,-1]; % real constellation, i.e. A modulate and transmit using this.
         constellation_real_quadrant_position =  [-1,1; -1,-1; 1,1; 1,-1]; % real constellation, i.e. A modulate and transmit using this.
         constellation_real_position = zeros(16,2);% real constellation, i.e. A modulate using this, this will rotate.
-        constellation_ideal_position = zeros(16,2);
+%         constellation_ideal_position = zeros(16,2);
         for temp1 = 0:3
             for temp2 = 1:4
                 constellation_real_position(temp1 * 4 + temp2,:) = constellation_fake_position(temp1 + 1,:) + constellation_real_quadrant_position(temp2,:);
@@ -68,7 +77,7 @@ for return_zero = return_zero_min:return_zero_step:return_zero_max
         % just modulation , awgn and demodulation!
         SER = zeros(1,length(SNR_db_min:SNR_db_step:SNR_db_max));
         BER = zeros(1,length(SNR_db_min:SNR_db_step:SNR_db_max));
-        constellation_position_to_draw = constellation_ideal_position;
+%         constellation_position_to_draw = constellation_ideal_position;
         SNR_idx = 0;
         for SNR_db = SNR_db_min:SNR_db_step:SNR_db_max
             SNR_idx = SNR_idx + 1;
@@ -97,6 +106,7 @@ for return_zero = return_zero_min:return_zero_step:return_zero_max
                         theta_ideal = 0;
                     end
                 end
+                
                 % firstly , map the received message x to rotation angle theta. use the theta to calculate constellation.
                 x_real = 0; % theta = f(x_real); x_real is got from message_B_demod
                 x_ideal = 0;
@@ -126,9 +136,14 @@ for return_zero = return_zero_min:return_zero_step:return_zero_max
                 end
                 theta_real = mod(theta_real, 2 * pi);
                 theta_ideal = mod(theta_ideal, 2 * pi);
-
-                r_real = scaling_r(theta_real);
-                r_ideal = scaling_r(theta_ideal);
+                if with_scaling == 1
+                    r_real = scaling_r(theta_real);
+                    r_ideal = scaling_r(theta_ideal);
+                else
+                    r_real = 1;
+                    r_ideal = 1;                    
+                end
+ 
                 rotation_matrix_real = [cos(theta_real),-sin(theta_real);sin(theta_real),cos(theta_real)];
                 rotation_matrix_ideal = [cos(theta_ideal),-sin(theta_ideal);sin(theta_ideal),cos(theta_ideal)];
                 % get the constellation 
@@ -157,12 +172,13 @@ for return_zero = return_zero_min:return_zero_step:return_zero_max
             [errorSym,SER(SNR_idx)] = symerr(message_A, message_A_demod);          
             scatter(real(sig_joint),imag(sig_joint));
             title(['received constellation at SNR=',num2str(SNR_db)]);
-            saveas(gcf,[dir_path,'\received_constellation_SNR_',num2str(SNR_db)],'fig');
+            % saveas(gcf,[dir_path,'\received_constellation_SNR_',num2str(SNR_db)],'fig');
             saveas(gcf,[dir_path,'\received_constellation_SNR_',num2str(SNR_db)],'bmp');
             % scatter(constellation_ideal_position(:,1),constellation_ideal_position(:,2));
             % title(['ideal constellation at SNR=',num2str(SNR_db)]);
         end % SNR
         semilogy(SNR_db_min:SNR_db_step:SNR_db_max,SER,'-go',SNR_db_min:SNR_db_step:SNR_db_max,BER,'-b*');
+        grid;
         legend('SER','BER');
         title('Performance of B as a receiver in AWGN');
         xlabel('Signal-to-Noise-Ratio(dB)');
